@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DropoutGuard — Bugema University</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">DG</div>
+        <div class="logo-name">DropoutGuard</div>
+      </div>
+      <div class="logo-sub">Bugema University · Uganda</div>
+    </div>
+    <div class="nav">
+      <div class="nav-group">
+        <div class="nav-group-label">Overview</div>
+        <div class="nav-item active" data-page="dashboard" onclick="navigate('dashboard', this)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+          <span>Dashboard</span>
+        </div>
+        <div class="nav-item" data-page="students" onclick="navigate('students', this)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+          <span>Students</span>
+          <span class="nav-badge" id="nav-badge-students">0</span>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Data Entry</div>
+        <div class="nav-item" data-page="attendance" onclick="navigate('attendance', this)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="14" height="13" rx="1.5"/><path d="M5 1v2M11 1v2M1 6h14"/><path d="M5 9l2 2 4-4"/></svg>
+          <span>Attendance</span>
+        </div>
+        <div class="nav-item" data-page="tuition" onclick="navigate('tuition', this)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="14" height="11" rx="1.5"/><path d="M1 7h14M5 11h2M10 11h1"/></svg>
+          <span>Tuition</span>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Analysis</div>
+        <div class="nav-item" data-page="predictions" onclick="navigate('predictions', this)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 4v5l3 2"/></svg>
+          <span>Predictions</span>
+        </div>
+        <div class="nav-item" data-page="reports" onclick="navigate('reports', this)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 1h7l4 4v10H3V1z"/><path d="M10 1v4h4"/><path d="M5 8h6M5 11h4"/></svg>
+          <span>Reports</span>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="avatar">LA</div>
+        <div>
+          <div class="user-name">L. Abdoul Karim</div>
+          <div class="user-role">Researcher</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="topbar-title">Dashboard</div>
+        <div class="page-subtitle" id="topbar-sub">Overview of all student risk signals</div>
+      </div>
+      <div class="topbar-right" id="topbar-actions"></div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <div class="stats-grid">
+          <div class="stat-card total">
+            <div class="stat-label">Total students</div>
+            <div class="stat-value c-accent" id="stat-total">0</div>
+            <div class="stat-sub">Registered in system</div>
+          </div>
+          <div class="stat-card high">
+            <div class="stat-label">High risk</div>
+            <div class="stat-value c-high" id="stat-high">0</div>
+            <div class="stat-sub">Urgent intervention</div>
+          </div>
+          <div class="stat-card med">
+            <div class="stat-label">Medium risk</div>
+            <div class="stat-value c-med" id="stat-med">0</div>
+            <div class="stat-sub">Monitor closely</div>
+          </div>
+          <div class="stat-card low">
+            <div class="stat-label">Low risk</div>
+            <div class="stat-value c-low" id="stat-low">0</div>
+            <div class="stat-sub">On track</div>
+          </div>
+        </div>
+        <div class="panels-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">At-risk students</div>
+              <div class="panel-action" onclick="navigate('predictions', document.querySelector('[data-page=predictions]'))">View all →</div>
+            </div>
+            <div id="dash-risk-list" class="risk-list">
+              <div class="empty"><div class="empty-title">No students yet</div>Add students to see risk scores</div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Risk distribution</div></div>
+            <div class="chart-box" style="height:180px;"><canvas id="chart-risk"></canvas></div>
+            <hr class="divider">
+            <div class="panel-title" style="margin-bottom:12px;font-size:12px;">Tuition status</div>
+            <div class="chart-box" style="height:140px;"><canvas id="chart-tuition"></canvas></div>
+          </div>
+          <div class="panel panel-wide">
+            <div class="panel-header"><div class="panel-title">Attendance vs risk — all students</div></div>
+            <div class="chart-box" style="height:200px;"><canvas id="chart-scatter"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDENTS -->
+      <div id="page-students" class="page">
+        <div id="student-alert"></div>
+        <div class="form-card" style="margin-bottom:20px;">
+          <div class="form-title">Register new student</div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label">Full name</label>
+              <input type="text" class="form-input" id="s-name" placeholder="e.g. Amara Kamuli">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Student ID</label>
+              <input type="text" class="form-input" id="s-id" placeholder="e.g. 23/BIT/001">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Programme</label>
+              <select class="form-select" id="s-prog">
+                <option value="BIT">Bachelor of Information Technology</option>
+                <option value="BBA">Bachelor of Business Administration</option>
+                <option value="BEd">Bachelor of Education</option>
+                <option value="BSW">Bachelor of Social Work</option>
+                <option value="BCom">Bachelor of Commerce</option>
+                <option value="BNS">Bachelor of Nursing Science</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Year of study</label>
+              <select class="form-select" id="s-year">
+                <option value="1">Year 1</option>
+                <option value="2">Year 2</option>
+                <option value="3">Year 3</option>
+                <option value="4">Year 4</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Gender</label>
+              <select class="form-select" id="s-gender">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Scholarship / sponsorship</label>
+              <select class="form-select" id="s-sponsor">
+                <option value="None">None (self-sponsored)</option>
+                <option value="USHEFP">USHEFP government loan</option>
+                <option value="Private">Private scholarship</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="addStudent()">Register student</button>
+            <button class="btn" onclick="clearStudentForm()">Clear</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Registered students</div>
+            <div id="student-count" style="font-size:11px;color:var(--text3);">0 students</div>
+          </div>
+          <div class="table-wrap">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>Name</th><th>ID</th><th>Programme</th><th>Year</th>
+                  <th>Gender</th><th>Sponsor</th><th>Attendance</th><th>Tuition</th><th>Risk</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="students-tbody">
+                <tr><td colspan="10" class="empty">No students registered yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATTENDANCE -->
+      <div id="page-attendance" class="page">
+        <div id="att-alert"></div>
+        <div class="form-card" style="margin-bottom:20px;">
+          <div class="form-title">Log attendance record</div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label">Student</label>
+              <select class="form-select" id="att-student"></select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Week / period</label>
+              <input type="date" class="form-input" id="att-date">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Classes held this week</label>
+              <input type="number" class="form-input" id="att-held" min="1" max="30" placeholder="e.g. 5">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Classes attended</label>
+              <input type="number" class="form-input" id="att-attended" min="0" max="30" placeholder="e.g. 3">
+            </div>
+            <div class="form-field full">
+              <label class="form-label">Reason for absence (optional)</label>
+              <input type="text" class="form-input" id="att-reason" placeholder="e.g. Medical, Financial, Unknown">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="logAttendance()">Save attendance</button>
+            <button class="btn" onclick="clearAttForm()">Clear</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Attendance log</div></div>
+          <div class="table-wrap">
+            <table class="tbl">
+              <thead>
+                <tr><th>Student</th><th>Date</th><th>Held</th><th>Attended</th><th>Rate</th><th>Reason</th><th></th></tr>
+              </thead>
+              <tbody id="att-tbody">
+                <tr><td colspan="7" class="empty">No attendance records yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TUITION -->
+      <div id="page-tuition" class="page">
+        <div id="tui-alert"></div>
+        <div class="form-card" style="margin-bottom:20px;">
+          <div class="form-title">Log tuition payment</div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label class="form-label">Student</label>
+              <select class="form-select" id="tui-student"></select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Semester</label>
+              <select class="form-select" id="tui-semester">
+                <option>Semester 1 — 2025/26</option>
+                <option>Semester 2 — 2025/26</option>
+                <option>Semester 1 — 2024/25</option>
+                <option>Semester 2 — 2024/25</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Amount due (UGX)</label>
+              <input type="number" class="form-input" id="tui-due" placeholder="e.g. 1800000">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Amount paid (UGX)</label>
+              <input type="number" class="form-input" id="tui-paid" placeholder="e.g. 900000">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Payment status</label>
+              <select class="form-select" id="tui-status">
+                <option value="paid">Paid in full</option>
+                <option value="partial">Partial payment</option>
+                <option value="overdue">Overdue / not paid</option>
+                <option value="ushefp">Sponsored (USHEFP)</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Payment date</label>
+              <input type="date" class="form-input" id="tui-date">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="logTuition()">Save payment</button>
+            <button class="btn" onclick="clearTuiForm()">Clear</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Tuition payment log</div></div>
+          <div class="table-wrap">
+            <table class="tbl">
+              <thead>
+                <tr><th>Student</th><th>Semester</th><th>Due (UGX)</th><th>Paid (UGX)</th><th>Status</th><th>Date</th><th></th></tr>
+              </thead>
+              <tbody id="tui-tbody">
+                <tr><td colspan="7" class="empty">No tuition records yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PREDICTIONS -->
+      <div id="page-predictions" class="page">
+        <div class="engine-grid">
+          <div>
+            <div class="panel" style="margin-bottom:14px;">
+              <div class="panel-header"><div class="panel-title">Select student</div></div>
+              <div id="pred-student-list" class="student-select-list">
+                <div class="empty"><div class="empty-title">No students yet</div>Register students first</div>
+              </div>
+              <button class="btn btn-primary" style="width:100%;" onclick="runAllPredictions()">Run all predictions</button>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><div class="panel-title">Adjust inputs</div></div>
+              <div class="form-field">
+                <label class="form-label">Attendance rate: <span id="att-slider-val" style="color:var(--accent2);">75%</span></label>
+                <input type="range" class="form-input" style="padding:0;" min="0" max="100" step="1" id="pred-att" value="75" oninput="onSlider()">
+              </div>
+              <div class="form-field">
+                <label class="form-label">Consec. absences (weeks): <span id="abs-slider-val" style="color:var(--accent2);">1</span></label>
+                <input type="range" class="form-input" style="padding:0;" min="0" max="12" step="1" id="pred-abs" value="1" oninput="onSlider()">
+              </div>
+              <div class="form-field">
+                <label class="form-label">Attendance trend</label>
+                <select class="form-select" id="pred-trend" onchange="onSlider()">
+                  <option value="stable">Stable</option>
+                  <option value="declining">Declining</option>
+                  <option value="improving">Improving</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">Tuition status</label>
+                <select class="form-select" id="pred-tui" onchange="onSlider()">
+                  <option value="paid">Paid in full</option>
+                  <option value="partial">Partial payment</option>
+                  <option value="overdue">Overdue</option>
+                  <option value="ushefp">USHEFP sponsored</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">Semesters with payment issues: <span id="pi-slider-val" style="color:var(--accent2);">0</span></label>
+                <input type="range" class="form-input" style="padding:0;" min="0" max="6" step="1" id="pred-pi" value="0" oninput="onSlider()">
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title" id="pred-student-name">Select a student</div>
+            </div>
+            <div class="score-row">
+              <div class="score-box">
+                <div class="score-lbl">Rule score</div>
+                <div class="score-num" id="pred-rule-score" style="color:var(--text3);">—</div>
+                <div class="score-tag" id="pred-rule-tag"></div>
+              </div>
+              <div class="score-box">
+                <div class="score-lbl">ML score</div>
+                <div class="score-num" id="pred-ml-score" style="color:var(--text3);">—</div>
+                <div class="score-tag" id="pred-ml-tag"></div>
+              </div>
+              <div class="score-box">
+                <div class="score-lbl">Final risk</div>
+                <div class="score-num" id="pred-final-score" style="color:var(--text3);">—</div>
+                <div class="score-tag" id="pred-final-tag"></div>
+              </div>
+            </div>
+
+            <div class="panel-title" style="font-size:12px;margin-bottom:12px;">SHAP — factor contributions</div>
+            <div id="shap-container">
+              <div style="color:var(--text3);font-size:12px;padding:16px 0;">Select a student and run prediction to see factor breakdown</div>
+            </div>
+
+            <div class="verdict-box" id="verdict-box" style="display:none;">
+              <div class="verdict-icon" id="verdict-icon"></div>
+              <div>
+                <div class="verdict-title" id="verdict-title"></div>
+                <div class="verdict-text" id="verdict-text"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:16px;">
+          <div class="panel-header"><div class="panel-title">All predictions summary</div></div>
+          <div class="table-wrap">
+            <table class="tbl">
+              <thead>
+                <tr><th>Student</th><th>Programme</th><th>Attendance</th><th>Tuition</th><th>Rule score</th><th>ML score</th><th>Final</th><th>Risk level</th></tr>
+              </thead>
+              <tbody id="pred-tbody">
+                <tr><td colspan="8" class="empty">Run predictions to see results</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div id="page-reports" class="page">
+        <div class="panels-grid">
+          <div class="panel panel-wide">
+            <div class="panel-header">
+              <div class="panel-title">Semester summary report</div>
+              <button class="btn" onclick="exportCSV()">Export CSV</button>
+            </div>
+            <div class="table-wrap">
+              <table class="tbl">
+                <thead>
+                  <tr><th>Student</th><th>ID</th><th>Programme</th><th>Avg attendance</th><th>Tuition status</th><th>Risk score</th><th>Risk level</th><th>Recommended action</th></tr>
+                </thead>
+                <tbody id="report-tbody">
+                  <tr><td colspan="8" class="empty">No data yet — register students and log attendance/tuition</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Risk trend — attendance threshold</div></div>
+            <div class="chart-box" style="height:220px;"><canvas id="chart-trend"></canvas></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Programme risk breakdown</div></div>
+            <div id="prog-breakdown"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="modal-delete">
+  <div class="modal">
+    <div class="modal-title">Delete student?</div>
+    <div style="font-size:13px;color:var(--text2);">This will remove the student and all their attendance and tuition records. This cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js">
+</script>
+</body>
+</html>
