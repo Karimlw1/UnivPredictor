@@ -1,7 +1,7 @@
 :root {
   /* Colors - Backgrounds */
   --bg: #0d0f14;
-  --bg2: #13161e;
+  --bg2: #ffffff;
   --bg3: #1a1e28;
   --bg4: #222736;
 
@@ -10,7 +10,7 @@
   --border2: rgba(255, 255, 255, 0.13);
 
   /* Text */
-  --text: #e8eaf0;
+  --text: var(--bg);
   --text2: #8b90a0;
   --text3: #555a6e;
 
@@ -279,7 +279,7 @@ body {
   border-radius: var(--radius);
   border: 1px solid var(--border2);
   background: var(--bg3);
-  color: var(--text);
+  color: #ffffff;
   font-size: 12px;
   cursor: pointer;
   font-family: var(--font);
@@ -377,15 +377,17 @@ body {
 }
 
 .panel {
-  background: var(--bg2);
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 18px;
+  padding: 20px;
+  color: royalblue;
 }
 .students{
- background-color:#433f402e;
-  color: black;
-  box-shadow: 0 0 10px 10px rgb(0 0 0 / 29%);
+ background: #b5c8d978;
+ backdrop-filter: blur(2px);
+ color: black;
+ box-shadow: 0 0 10px 10px rgb(0 0 0 / 29%);
 }
 
 .panel-wide {
@@ -578,7 +580,7 @@ body {
   background: var(--bg3);
   border: 1px solid var(--border2);
   border-radius: var(--radius);
-  color: var(--text);
+  color: #ffffff;
   font-family: var(--font);
   font-size: 13px;
   transition: border-color 0.15s;
@@ -615,7 +617,20 @@ body {
 }
 
 .score-box {
-  background: var(--bg3);
+  <
+  div class="bugema-logo2">
+        <img class="BU-logo2" src="https: //upload.wikimedia.org/wikipedia/commons/0/0b/Bugema_logo.png" alt="bugema logo" style="
+    width: 156px;
+    ;/* position: relative; */;
+    ;/* top: 123px; */;
+    ;/* left: 58px; */;
+    ;/* z-index: -1; */;
+">
+    
+        
+    </div>;
+  background: #ebebeb;
+  box-shadow: 0px 0px 7px 0px rgb(7 7 7 / 35%);
   border-radius: var(--radius);
   padding: 12px;
   text-align: center;
